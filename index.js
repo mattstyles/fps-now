@@ -1,6 +1,7 @@
 
 var Meter = require( 'fps' )
 var fit = require( 'canvas-fit' )
+var loop = require( 'raf-loop' )
 
 const PI2 = Math.PI * 2
 
@@ -44,9 +45,8 @@ function createElements( id = 'fps', shape ) {
 
 module.exports = class FPS {
   constructor( opts ) {
-    this.width = 128
-    this.height = 64
     this.shape = [ 128, 64 ]
+    this.current = 0
 
     this.dom = createElements( 'fps', this.shape )
     this.meter = new Meter({
@@ -63,12 +63,13 @@ module.exports = class FPS {
       this.history.push( 0 )
     }
 
+    this.engine = loop( this.render.bind( this ) ).start()
   }
 
   update( fps ) {
-    this.history.pop()
-    this.history.unshift( fps )
-    this.render()
+    this.current = fps
+    this.history.push( this.normalize( fps ) )
+    this.history.shift()
   }
 
   tick() {
@@ -76,21 +77,24 @@ module.exports = class FPS {
   }
 
   render() {
-    this.dom.title.innerHTML = this.history[ 0 ].toFixed( 1 )
+    this.dom.title.innerHTML = this.current.toFixed( 1 )
 
     this.ctx.clearRect( 0, 0, ...this.shape )
     this.ctx.fillStyle = 'rgba(255,128,0,.85)'
 
-    for ( var i = 0; i < this.history.length; i++ ) {
-      if ( this.history[ i ] ) {
-        this.renderFrame( i * 2 + 1, this.history[ i ] )
-      }
+    for ( var i = 0; i < this.history.length - 1; i++ ) {
+      this.history[ i ] = this.history[ i + 1 ]
+      this.renderFrame( i * 2 + 1, this.history[ i ] )
     }
   }
 
   renderFrame( x, y ) {
     this.ctx.beginPath()
-    this.ctx.arc( x, this.shape[ 1 ] - ( y / 100 * this.shape[ 1 ] ), 2, 0, PI2 )
+    this.ctx.arc( x, y, 2, 0, PI2 )
     this.ctx.fill()
+  }
+
+  normalize( fps ) {
+    return this.shape[ 1 ] - fps / 100 * this.shape[ 1 ]
   }
 }
