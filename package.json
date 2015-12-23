@@ -1,0 +1,36 @@
+{
+  "name": "fps-now",
+  "version": "0.0.0",
+  "description": "FPS meter for evergreen browsers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "budo example.js --live"
+  },
+  "keywords": [
+    "fps",
+    "performance",
+    "stats",
+    "frames",
+    "measure",
+    "tick",
+    "meter"
+  ],
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "author": "Matt Styles",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-preset-urban": "^0.3.0",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "budo": "^7.1.0"
+  },
+  "dependencies": {
+    "canvas-fit": "^1.5.0",
+    "fps": "0.0.3"
+  }
+}
