@@ -4,4 +4,4 @@ var loop = require( 'raf-loop' )
 
 var fps = new FPS()
 
-loop( fps.tick.bind( fps ) ).start()
+loop( fps.tick ).start()

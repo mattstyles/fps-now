@@ -11,11 +11,13 @@ function createElements( id = 'fps', shape ) {
   wrap.setAttribute( 'id', id )
   Object.assign( wrap.style, {
     position: 'absolute',
-    top: '0px',
-    right: '0px',
+    top: '3px',
+    right: '3px',
     zIndex: '1000',
     width: shape[ 0 ] + 'px',
-    height: shape[ 1 ] + 'px'
+    height: shape[ 1 ] + 'px',
+    background: 'rgba( 255, 255, 255, .95 )',
+    border: '3px solid rgba( 255, 255, 255, 1 )'
   })
 
   var title = document.createElement( 'span' )
@@ -27,9 +29,12 @@ function createElements( id = 'fps', shape ) {
     zIndex: '10',
     height: '12px',
     fontSize: '12px',
+    fontWeight: '600',
     lineHeight: '1',
     fontFamily: 'sans-serif',
-    textAlign: 'right'
+    textAlign: 'right',
+    boxSizing: 'border-box',
+    padding: '2px'
   })
 
   var canvas = document.createElement( 'canvas' )
@@ -43,7 +48,7 @@ function createElements( id = 'fps', shape ) {
   return { wrap, title, canvas }
 }
 
-module.exports = class FPS {
+class FPS {
   constructor( opts ) {
     this.shape = [ 128, 64 ]
     this.current = 0
@@ -54,40 +59,55 @@ module.exports = class FPS {
       decay: .15
     })
 
-    this.meter.on( 'data', this.update.bind( this ) )
+    this.meter.on( 'data', this.update )
+    this.meter.once( 'data', this.start )
 
     this.ctx = this.dom.canvas.getContext( '2d' )
     this.history = []
 
-    for ( var i = 0; i < 63; i++ ) {
+    for ( var i = 0; i < this.shape[ 0 ] / 2; i++ ) {
       this.history.push( 0 )
     }
 
-    this.engine = loop( this.render.bind( this ) ).start()
+    this.engine = loop( this.render )
   }
 
-  update( fps ) {
+  start = () => {
+    this.engine.start()
+  }
+
+  update = ( fps ) => {
     this.current = fps
     this.history.push( this.normalize( fps ) )
     this.history.shift()
   }
 
-  tick() {
+  tick = () => {
     this.meter.tick()
   }
 
-  render() {
+  render = () => {
     this.dom.title.innerHTML = this.current.toFixed( 1 )
 
     this.ctx.clearRect( 0, 0, ...this.shape )
-    this.ctx.fillStyle = 'rgba(255,128,0,.85)'
+    this.ctx.fillStyle = 'rgba( 192, 192, 192, .95 )'
+
+    this.ctx.beginPath()
+    this.ctx.moveTo( this.shape[ 0 ], this.history[ this.history.length - 1 ] )
+    this.ctx.lineTo( this.shape[ 0 ], this.shape[ 1 ] )
+    this.ctx.lineTo( 2, this.shape[ 1 ] )
+    this.ctx.lineTo( 2, this.history[ 0 ] )
 
     for ( var i = 0; i < this.history.length - 1; i++ ) {
       this.history[ i ] = this.history[ i + 1 ]
-      this.renderFrame( i * 2 + 1, this.history[ i ] )
+      // this.renderFrame( i * 2 + 1, this.history[ i ] )
+      this.ctx.lineTo( i * 2 + 1, this.history[ i ] )
     }
+
+    this.ctx.fill()
   }
 
+  // deprecated
   renderFrame( x, y ) {
     this.ctx.beginPath()
     this.ctx.arc( x, y, 2, 0, PI2 )
@@ -98,3 +118,5 @@ module.exports = class FPS {
     return this.shape[ 1 ] - fps / 100 * this.shape[ 1 ]
   }
 }
+
+module.exports = FPS
