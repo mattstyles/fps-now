@@ -1,6 +1,6 @@
 {
   "name": "fps-now",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "FPS meter for evergreen browsers",
   "main": "bundle.js",
   "scripts": {
