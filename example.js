@@ -1,8 +1,7 @@
 
 var FPS = require( './' )
+var loop = require( 'raf-loop' )
 
 var fps = new FPS()
 
-setInterval( () => {
-  fps.tick()
-}, 1000 / 60 )
+loop( fps.tick.bind( fps ) ).start()

@@ -50,8 +50,8 @@ module.exports = class FPS {
 
     this.dom = createElements( 'fps', this.shape )
     this.meter = new Meter({
-      every: 10,
-      decay: .25
+      every: 1,
+      decay: .15
     })
 
     this.meter.on( 'data', this.update.bind( this ) )
