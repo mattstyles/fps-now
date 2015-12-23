@@ -95,8 +95,8 @@ class FPS {
     this.ctx.beginPath()
     this.ctx.moveTo( this.shape[ 0 ], this.history[ this.history.length - 1 ] )
     this.ctx.lineTo( this.shape[ 0 ], this.shape[ 1 ] )
-    this.ctx.lineTo( 2, this.shape[ 1 ] )
-    this.ctx.lineTo( 2, this.history[ 0 ] )
+    this.ctx.lineTo( 0, this.shape[ 1 ] )
+    this.ctx.lineTo( 0, this.history[ 0 ] )
 
     for ( var i = 0; i < this.history.length - 1; i++ ) {
       this.history[ i ] = this.history[ i + 1 ]
