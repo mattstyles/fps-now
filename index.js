@@ -2,8 +2,10 @@
 var Meter = require( 'fps' )
 var fit = require( 'canvas-fit' )
 
+const PI2 = Math.PI * 2
+
 // Create elements
-function createElements( id = 'fps' ) {
+function createElements( id = 'fps', shape ) {
   var wrap = document.createElement( 'div' )
   wrap.setAttribute( 'id', id )
   Object.assign( wrap.style, {
@@ -11,8 +13,8 @@ function createElements( id = 'fps' ) {
     top: '0px',
     right: '0px',
     zIndex: '1000',
-    width: '128px',
-    height: '64px'
+    width: shape[ 0 ] + 'px',
+    height: shape[ 1 ] + 'px'
   })
 
   var title = document.createElement( 'span' )
@@ -42,10 +44,14 @@ function createElements( id = 'fps' ) {
 
 module.exports = class FPS {
   constructor( opts ) {
-    this.dom = createElements()
+    this.width = 128
+    this.height = 64
+    this.shape = [ 128, 64 ]
+
+    this.dom = createElements( 'fps', this.shape )
     this.meter = new Meter({
       every: 10,
-      decay: .5
+      decay: .25
     })
 
     this.meter.on( 'data', this.update.bind( this ) )
@@ -53,15 +59,15 @@ module.exports = class FPS {
     this.ctx = this.dom.canvas.getContext( '2d' )
     this.history = []
 
-    for ( var i = 0; i < 64; i++ ) {
+    for ( var i = 0; i < 63; i++ ) {
       this.history.push( 0 )
     }
 
-    this.history.push( 1 )
   }
 
   update( fps ) {
-    this.current = fps
+    this.history.pop()
+    this.history.unshift( fps )
     this.render()
   }
 
@@ -70,7 +76,21 @@ module.exports = class FPS {
   }
 
   render() {
-    this.dom.title.innerHTML = this.current.toFixed( 1 )
+    this.dom.title.innerHTML = this.history[ 0 ].toFixed( 1 )
 
+    this.ctx.clearRect( 0, 0, ...this.shape )
+    this.ctx.fillStyle = 'rgba(255,128,0,.85)'
+
+    for ( var i = 0; i < this.history.length; i++ ) {
+      if ( this.history[ i ] ) {
+        this.renderFrame( i * 2 + 1, this.history[ i ] )
+      }
+    }
+  }
+
+  renderFrame( x, y ) {
+    this.ctx.beginPath()
+    this.ctx.arc( x, this.shape[ 1 ] - ( y / 100 * this.shape[ 1 ] ), 2, 0, PI2 )
+    this.ctx.fill()
   }
 }
