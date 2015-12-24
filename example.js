@@ -1,5 +1,5 @@
 
-const FPS = require( './' )
+const FPS = require( './src' )
 const Context = require( '2d-context' )
 const loop = require( 'canvas-loop' )
 const easing = require( 'eases/quad-in-out' )
