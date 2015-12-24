@@ -1,5 +1,5 @@
 
-var Meter = require( 'fps' )
+var Meter = require( './meter' )
 var fit = require( 'canvas-fit' )
 var loop = require( 'raf-loop' )
 
@@ -48,7 +48,7 @@ function createElements( id = 'fps', shape ) {
   return { wrap, title, canvas }
 }
 
-class FPS {
+module.exports = class FPS {
   constructor( opts ) {
     this.shape = [ 128, 64 ]
     this.current = 0
@@ -118,5 +118,3 @@ class FPS {
     return this.shape[ 1 ] - fps / 100 * this.shape[ 1 ]
   }
 }
-
-module.exports = FPS
