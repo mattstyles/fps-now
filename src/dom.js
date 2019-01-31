@@ -28,10 +28,9 @@ export function createElements (id = 'fps', shape) {
     fontSize: '12px',
     fontWeight: '600',
     lineHeight: '1',
-    fontFamily: 'sans-serif',
+    fontFamily: 'monospace',
     textAlign: 'right',
-    boxSizing: 'border-box',
-    padding: '2px'
+    boxSizing: 'border-box'
   })
 
   var canvas = document.createElement('canvas')

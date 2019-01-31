@@ -59,7 +59,6 @@ module.exports = class FPS extends EventEmitter {
   }
 
   render = () => {
-    // this.dom.title.innerHTML = tail(this.history).toFixed(1)
     this.dom.title.innerHTML = this.getFps().toFixed(1)
     renderGraph(this.ctx, this.shape, this.history)
   }

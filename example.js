@@ -35,7 +35,6 @@ app.on('tick', dt => {
   ctx.fillRect(0, 0, width, height)
 
   const anim = easing(Math.sin(time) * 0.5 + 0.5)
-  // const rot = Math.sin(time)
 
   ctx.strokeStyle = 'rgba( 255, 255, 255, 1 )'
   ctx.beginPath()
