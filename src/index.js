@@ -1,55 +1,8 @@
 
-var Meter = require('./meter')
-var fit = require('canvas-fit')
-var loop = require('raf-loop')
-
-const PI2 = Math.PI * 2
-const scale = window && window.devicePixelRatio
-  ? window.devicePixelRatio
-  : 1
-
-// Create elements
-function createElements (id = 'fps', shape) {
-  var wrap = document.createElement('div')
-  wrap.setAttribute('id', id)
-  Object.assign(wrap.style, {
-    position: 'absolute',
-    top: '3px',
-    right: '3px',
-    zIndex: '1000',
-    width: shape[ 0 ] + 'px',
-    height: shape[ 1 ] + 'px',
-    background: 'rgba( 255, 255, 255, .95 )',
-    border: '3px solid rgba( 255, 255, 255, 1 )'
-  })
-
-  var title = document.createElement('span')
-  Object.assign(title.style, {
-    position: 'absolute',
-    top: '0px',
-    left: '0px',
-    right: '0px',
-    zIndex: '10',
-    height: '12px',
-    fontSize: '12px',
-    fontWeight: '600',
-    lineHeight: '1',
-    fontFamily: 'sans-serif',
-    textAlign: 'right',
-    boxSizing: 'border-box',
-    padding: '2px'
-  })
-
-  var canvas = document.createElement('canvas')
-
-  window.addEventListener('resize', fit(canvas, wrap, scale), false)
-
-  wrap.appendChild(title)
-  wrap.appendChild(canvas)
-  document.body.appendChild(wrap)
-
-  return { wrap, title, canvas }
-}
+import loop from 'raf-loop'
+import Meter from './meter'
+import { createElements } from './dom'
+import { scale } from './constants'
 
 module.exports = class FPS {
   constructor (opts) {
@@ -73,10 +26,15 @@ module.exports = class FPS {
     }
 
     this.engine = loop(this.render)
+    this.engine.on('tick', this.tick)
   }
 
   start = () => {
     this.engine.start()
+  }
+
+  stop = () => {
+    this.engine.stop()
   }
 
   update = (fps) => {
@@ -106,20 +64,12 @@ module.exports = class FPS {
 
     for (var i = 0; i < this.history.length - 1; i++) {
       this.history[ i ] = this.history[ i + 1 ]
-      // this.renderFrame(i * 2 + 1, this.history[ i ])
-      this.ctx.lineTo(i * 2 + 1, this.history[ i ])
+      // this.ctx.lineTo(i * 2 + 1, this.history[ i ])
     }
 
     this.ctx.fill()
 
     this.ctx.restore()
-  }
-
-  // deprecated
-  renderFrame (x, y) {
-    this.ctx.beginPath()
-    this.ctx.arc(x, y, 2, 0, PI2)
-    this.ctx.fill()
   }
 
   normalize (fps) {

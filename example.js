@@ -18,7 +18,7 @@ const app = loop(ctx.canvas, {
 var time = 0
 
 app.on('tick', dt => {
-  fps.tick()
+  // fps.tick()
   time += dt / 1000
 
   const [ width, height ] = app.shape
@@ -47,3 +47,4 @@ app.on('tick', dt => {
 })
 
 app.start()
+fps.start()

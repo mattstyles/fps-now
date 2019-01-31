@@ -25,7 +25,7 @@ module.exports = class Tick extends EventEmitter {
     this.last = now()
   }
 
-  tick () {
+  tick = () => {
     var time = now()
     var fps = time - this.last
 
