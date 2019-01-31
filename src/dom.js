@@ -1,6 +1,7 @@
 
-import { scale } from './constants'
 import fit from 'canvas-fit'
+import { scale } from './constants'
+import { tail, head, normalize } from './utils'
 
 export function createElements (id = 'fps', shape) {
   var container = document.createElement('div')
@@ -44,8 +45,6 @@ export function createElements (id = 'fps', shape) {
   return { container, title, canvas }
 }
 
-const last = arr => arr[arr.length - 1]
-
 export function renderGraph (ctx, shape, graph) {
   ctx.save()
   ctx.scale(scale, scale)
@@ -54,15 +53,13 @@ export function renderGraph (ctx, shape, graph) {
   ctx.fillStyle = 'rgba(192, 192, 192, .95)'
 
   ctx.beginPath()
-  ctx.moveTo(shape[0], last(graph))
+  ctx.moveTo(shape[0], normalize(shape[1], tail(graph)))
   ctx.lineTo(shape[0], shape[1])
   ctx.lineTo(0, shape[1])
-  ctx.lineTo(0, graph[0])
+  ctx.lineTo(0, normalize(shape[1], head(graph)))
 
   for (var i = 0; i < graph.length - 1; i++) {
-    graph[i] = graph[i + 1]
-    // ctx.lineTo(i * 2 + 1, graph[ i ])
-    ctx.lineTo(i, graph[i])
+    ctx.lineTo(i, normalize(shape[1], graph[i]))
   }
 
   ctx.fill()

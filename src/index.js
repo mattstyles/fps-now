@@ -3,6 +3,7 @@ import loop from 'raf-loop'
 import EventEmitter from 'eventemitter3'
 import { Meter } from './meter'
 import { createElements, renderGraph } from './dom'
+import { tail } from './utils'
 
 const defaultOptions = {
   x: 64,
@@ -16,7 +17,6 @@ module.exports = class FPS extends EventEmitter {
     super()
 
     this.shape = opts.shape || [opts.x, opts.y]
-    this.current = 0
 
     this.dom = opts.visual && createElements('fps', this.shape)
     this.meter = new Meter({
@@ -52,18 +52,16 @@ module.exports = class FPS extends EventEmitter {
   }
 
   update = (fps) => {
-    this.current = fps
-    this.history.push(this.normalize(fps))
+    this.history.push(fps)
     this.history.shift()
   }
 
   render = () => {
-    this.dom.title.innerHTML = this.current.toFixed(1)
-
+    this.dom.title.innerHTML = tail(this.history).toFixed(1)
     renderGraph(this.ctx, this.shape, this.history)
   }
 
-  normalize (fps) {
-    return this.shape[ 1 ] - fps / 100 * this.shape[ 1 ]
+  normalize = (fps) => {
+    return this.shape[1] - fps / 100 * this.shape[1]
   }
 }
