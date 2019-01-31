@@ -4,13 +4,13 @@
  * The performance.now stuff was causing issues so had to rewrite
  */
 
-var EventEmitter = require('eventemitter3')
+import EventEmitter from 'eventemitter3'
 
 var now = window && window.performance
   ? window.performance.now.bind(window.performance)
   : Date.now || function () { return +new Date() }
 
-module.exports = class Tick extends EventEmitter {
+export class Meter extends EventEmitter {
   constructor (opts) {
     super()
     this.options = {

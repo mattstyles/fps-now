@@ -1,15 +1,24 @@
 
 import loop from 'raf-loop'
-import Meter from './meter'
-import { createElements } from './dom'
-import { scale } from './constants'
+import EventEmitter from 'eventemitter3'
+import { Meter } from './meter'
+import { createElements, renderGraph } from './dom'
 
-module.exports = class FPS {
-  constructor (opts) {
-    this.shape = [64, 32]
+const defaultOptions = {
+  x: 64,
+  y: 32,
+  shape: [64, 32],
+  visual: true
+}
+
+module.exports = class FPS extends EventEmitter {
+  constructor (opts = defaultOptions) {
+    super()
+
+    this.shape = opts.shape || [opts.x, opts.y]
     this.current = 0
 
-    this.dom = createElements('fps', this.shape)
+    this.dom = opts.visual && createElements('fps', this.shape)
     this.meter = new Meter({
       every: 1,
       decay: 0.15
@@ -18,15 +27,20 @@ module.exports = class FPS {
     this.meter.on('data', this.update)
     this.meter.once('data', this.start)
 
-    this.ctx = this.dom.canvas.getContext('2d')
-    this.history = []
-
-    for (var i = 0; i < this.shape[ 0 ] / 2; i++) {
-      this.history.push(0)
+    if (opts.visual) {
+      this.ctx = this.dom.canvas.getContext('2d')
     }
 
-    this.engine = loop(this.render)
-    this.engine.on('tick', this.tick)
+    this.history = new Array(this.shape[0]).fill(0)
+
+    this.engine = loop(() => {
+      this.meter.tick()
+      if (opts.visual) {
+        this.render()
+      }
+
+      this.emit('tick', this.history)
+    })
   }
 
   start = () => {
@@ -43,33 +57,10 @@ module.exports = class FPS {
     this.history.shift()
   }
 
-  tick = () => {
-    this.meter.tick()
-  }
-
   render = () => {
     this.dom.title.innerHTML = this.current.toFixed(1)
 
-    this.ctx.save()
-    this.ctx.scale(scale, scale)
-
-    this.ctx.clearRect(0, 0, ...this.shape)
-    this.ctx.fillStyle = 'rgba( 192, 192, 192, .95 )'
-
-    this.ctx.beginPath()
-    this.ctx.moveTo(this.shape[ 0 ], this.history[ this.history.length - 1 ])
-    this.ctx.lineTo(this.shape[ 0 ], this.shape[ 1 ])
-    this.ctx.lineTo(0, this.shape[ 1 ])
-    this.ctx.lineTo(0, this.history[ 0 ])
-
-    for (var i = 0; i < this.history.length - 1; i++) {
-      this.history[ i ] = this.history[ i + 1 ]
-      // this.ctx.lineTo(i * 2 + 1, this.history[ i ])
-    }
-
-    this.ctx.fill()
-
-    this.ctx.restore()
+    renderGraph(this.ctx, this.shape, this.history)
   }
 
   normalize (fps) {
