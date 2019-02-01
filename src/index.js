@@ -14,6 +14,10 @@ const defaultOptions = {
 }
 
 module.exports = class FPS extends EventEmitter {
+  static of (opts) {
+    return new FPS(opts)
+  }
+
   constructor (opts = defaultOptions) {
     super()
 
