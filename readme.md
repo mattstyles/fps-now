@@ -81,6 +81,8 @@ fps.on('tick', function onTick (graph) {
 fps.start()
 ```
 
+There is another use-case for setting `visual: false` which is if you just want to measure FPS and maybe make decisions in your application based on that. Visualisation is unnecessary for this. You can use the emitted `tick` event to access the frame rate history and do whatever you need with that record of history.
+
 ### Averaging
 
 By default only the last ticks frame rate is rendered, set `{averageFPS: true}` if you want an average of the samples.
