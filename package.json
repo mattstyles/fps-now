@@ -1,6 +1,6 @@
 {
   "name": "fps-now",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "FPS meter for evergreen browsers",
   "main": "lib",
   "scripts": {
