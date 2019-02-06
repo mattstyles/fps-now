@@ -39,15 +39,13 @@ module.exports = class FPS extends EventEmitter {
 
     this.history = new Array(this.shape[0]).fill(0)
 
-    console.log(this.history, this.shape, this.opts)
-
     this.engine = loop(() => {
       this.meter.tick()
       if (this.opts.visual) {
         this.render()
       }
 
-      this.emit('tick', this.history)
+      this.emit('tick', this.opts.averageFPS ? average(this.history) : this.history)
     })
   }
 
