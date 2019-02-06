@@ -18,13 +18,13 @@ module.exports = class FPS extends EventEmitter {
     return new FPS(opts)
   }
 
-  constructor (opts = defaultOptions) {
+  constructor (opts) {
     super()
 
-    this.opts = opts
-    this.shape = opts.shape || [opts.x, opts.y]
+    this.opts = Object.assign(defaultOptions, opts)
+    this.shape = this.opts.shape || [this.opts.x, this.opts.y]
 
-    this.dom = opts.visual && createElements('fps', this.shape)
+    this.dom = this.opts.visual && createElements('fps', this.shape)
     this.meter = new Meter({
       every: 1,
       decay: 0.15
@@ -39,9 +39,11 @@ module.exports = class FPS extends EventEmitter {
 
     this.history = new Array(this.shape[0]).fill(0)
 
+    console.log(this.history, this.shape, this.opts)
+
     this.engine = loop(() => {
       this.meter.tick()
-      if (opts.visual) {
+      if (this.opts.visual) {
         this.render()
       }
 
