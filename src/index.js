@@ -33,7 +33,7 @@ module.exports = class FPS extends EventEmitter {
     this.meter.on('data', this.update)
     this.meter.once('data', this.start)
 
-    if (opts.visual) {
+    if (this.opts.visual) {
       this.ctx = this.dom.canvas.getContext('2d')
     }
 
