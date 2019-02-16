@@ -13,6 +13,7 @@ const styles = {
     position: 'absolute',
     top: 3,
     right: 3,
+    zIndex: 10000,
     borderRadius: 3,
     background: 'rgba(0, 0, 0, 0.1)',
     padding: '8px 16px',
@@ -27,7 +28,7 @@ const Wrapper = ({ children }) => (
   </div>
 )
 
-const Text = ({children}) => (
+const Text = ({ children }) => (
   <span style={styles.text}>
     {children}
   </span>
@@ -41,7 +42,8 @@ export default class FPS extends Component {
   componentWillMount () {
     this.fps = vanillaFPS.of({
       visual: false,
-      averageFPS: true
+      averageFPS: true,
+      x: 10
     })
     this.fps.on('tick', this.onTick)
   }
