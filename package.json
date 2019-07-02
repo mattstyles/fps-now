@@ -48,7 +48,7 @@
     "raid-streams": "^3.0.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "speedrun": "0.2.0",
+    "speedrun": "^0.3.0",
     "standard": "^12.0.1",
     "styled-components": "^4.1.3"
   },
